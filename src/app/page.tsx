@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRef } from "react";
 import { useAccount, usePublicClient, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import Image from "next/image";
+import { waitForTransactionReceipt } from '@wagmi/core'
 
 
 const contractAddress = "0x132aD93aF0b4A0A34147b9857EeE014B424F62e2" as const;
@@ -26,7 +26,7 @@ export default function Home() {
     abi: contractABI,
     address: contractAddress,
     functionName: "getTodos",
-    args: [address],
+    args: [address as `0x${string}`],
     query: { enabled: !!address }
   })
 
@@ -34,7 +34,7 @@ export default function Home() {
     abi: contractABI,
     address: contractAddress,
     functionName: "userTodoCount",
-    args: [address],
+    args: [address as `0x${string}`],
     query: { enabled: !!address }
   })
 
@@ -43,7 +43,7 @@ export default function Home() {
     mutation: {
       onSuccess: async (data) => {
         console.log('data: ', data)
-        await publicClient?.waitForTransactionReciept({ hash:data });
+        await publicClient?.waitForTransactionReceipt({ hash: data });
         await refetch();
       }
     }
@@ -84,10 +84,10 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-6 bg-black">
-      <div className="flex ml-auto md:h-50 justify-end items-center gap-[30px] font-bold text-[15px] h-10 mt-0" > 
-         <ConnectButton />
+      <div className="flex ml-auto md:h-50 justify-end items-center gap-[30px] font-bold text-[15px] h-10 mt-0" >
+        <ConnectButton showBalance={false} />
       </div>
-      
+
       <div className="flex gap-5">
         <Input placeholder="Add Todo item" ref={inputRef} />
         <Button className="cursor-pointer active:scale-95" onClick={() => createTodo()}>Create Task</Button>
@@ -104,7 +104,7 @@ export default function Home() {
         ))}
       </ul>
       <div>
-        <p className="text-white">Copyright Lagos Labs {year}</p>
+        <p className="text-white">A Lagos Labs Joint {year}</p>
       </div>
     </main>
   );
