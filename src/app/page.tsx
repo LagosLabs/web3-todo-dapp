@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRef } from "react";
-import { useAccount, usePublicClient, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { waitForTransactionReceipt } from '@wagmi/core'
+import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
+import { waitForTransactionReceipt } from "viem/actions";
+
 
 
 const contractAddress = "0x132aD93aF0b4A0A34147b9857EeE014B424F62e2" as const;
@@ -19,9 +20,11 @@ type Todo = {
 }
 
 export default function Home() {
+
   const inputRef = useRef<HTMLInputElement>(null);
   const { address } = useAccount();
   const publicClient = usePublicClient
+
   const { data, refetch } = useReadContract({
     abi: contractABI,
     address: contractAddress,
@@ -37,7 +40,8 @@ export default function Home() {
     args: [address as `0x${string}`],
     query: { enabled: !!address }
   })
-
+  console.log('userTodosCount: ', userTodosCount.data);
+  console.log('todos: ', data)
 
   const { writeContract } = useWriteContract({
     mutation: {
@@ -50,7 +54,6 @@ export default function Home() {
   });
 
 
-
   const createTodo = () => {
     if (!inputRef.current && !inputRef.current!.value) return console.error("No input value");
     writeContract({
@@ -58,8 +61,9 @@ export default function Home() {
       address: contractAddress,
       functionName: 'createTodo',
       args: [inputRef.current!.value],
-
     })
+
+    inputRef.current!.value = "";
   }
 
   const deleteTodo = (id: bigint) => {

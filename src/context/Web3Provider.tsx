@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 
 const config = getDefaultConfig({
   appName: "cashapp",
-  projectId: process.env.NEXT_PUBLIC_PROJECT_ID!,
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID as string,
   chains: [polygonMumbai],
   ssr: true,
 });
